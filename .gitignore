@@ -1,4 +1,26 @@
-dist
-.vscode
-.pytest_cache
-src/__pycache__
+# Python build / dist artifacts
+build/
+*.egg-info/
+
+# Bytecode caches
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+.env
+.envrc
+
+# Test / coverage / tooling caches
+.coverage
+htmlcov/
+.mypy_cache/
+.cache/
+.pytest_cache/
+
+# IDE / OS files
+.DS_Store
+.vscode/
+
+# Distribution folder
+dist/
