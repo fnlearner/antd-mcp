@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "antd-mcp-server"
+version = "0.1.0"
+description = "MCP server exposing Ant Design v4 Chinese documentation as structured JSON-RPC tools"
+readme = "README.md"
+authors = [{name = "Your Name", email = "you@example.com"}]
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["mcp", "ant-design", "documentation", "json-rpc", "ai-tools"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+dependencies = [
+  "requests>=2.31.0",
+  "beautifulsoup4>=4.12.0",
+  "lxml>=4.9.0",
+  "html5lib>=1.1"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4.0"]
+
+[project.scripts]
+antd-mcp = "antd_mcp.server:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["antd_mcp*"]
+
+[tool.setuptools.package-data]
+antd_mcp = ["README.md"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+
+[tool.distutils.bdist_wheel]
+universal = true

@@ -1,0 +1,2 @@
+[console_scripts]
+antd-mcp = antd_mcp.server:main

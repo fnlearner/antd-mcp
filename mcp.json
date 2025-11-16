@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "servers": {
+    "antd_mcp": {
+      "command": "python",
+      "args": ["-m", "antd_mcp"],
+      "env": {
+        "MCP_PRETTY": "1"
+      },
+      "timeoutSeconds": 60
+    }
+  }
+}

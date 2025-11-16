@@ -1,0 +1,169 @@
+Metadata-Version: 2.4
+Name: antd-mcp-server
+Version: 0.1.0
+Summary: MCP server exposing Ant Design v4 Chinese documentation as structured JSON-RPC tools
+Author-email: Your Name <you@example.com>
+License: MIT
+Keywords: mcp,ant-design,documentation,json-rpc,ai-tools
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.31.0
+Requires-Dist: beautifulsoup4>=4.12.0
+Requires-Dist: lxml>=4.9.0
+Requires-Dist: html5lib>=1.1
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.0; extra == "dev"
+Dynamic: license-file
+
+# Ant Design MCP Server (Python)
+
+This Model Context Protocol (MCP) server fetches and structures Ant Design v4 (Chinese) component documentation into JSON so AI agents can perform analysis.
+
+## Features
+- Fetch overview page and individual component pages.
+- Extract component metadata: name, description, examples.
+- Classify API tables automatically (props / events / methods / other).
+- Cache fetched HTML locally.
+- Export all components into a single JSON file.
+- MCP tools exposed over JSON-RPC stdio.
+
+## Tools
+- list_components(force?)
+- get_component(name, force?)
+- search_components(query)
+- export_all(force?, filepath?)
+
+## Environment Setup
+Choose one method:
+
+### venv (built-in)
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r src/antd_mcp/requirements.txt
+```
+
+### pyenv + venv
+```
+brew install pyenv
+pyenv install 3.11.8
+pyenv local 3.11.8
+python -m venv .venv
+source .venv/bin/activate
+pip install -r src/antd_mcp/requirements.txt
+```
+
+### Conda
+```
+conda create -n antd-mcp python=3.11 -y
+conda activate antd-mcp
+pip install -r src/antd_mcp/requirements.txt
+```
+
+## Run Server
+```
+python -m antd_mcp
+# or
+python src/antd_mcp/server.py
+```
+
+## JSON-RPC Examples
+```
+# List tools
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python -m antd_mcp
+
+# List components
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_components","arguments":{}}}' | python -m antd_mcp
+
+# Get one component
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"get_component","arguments":{"name":"Button"}}}' | python -m antd_mcp
+
+# Search components
+echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"search_components","arguments":{"query":"form"}}}' | python -m antd_mcp
+
+# Export all component data
+echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"export_all","arguments":{}}}' | python -m antd_mcp
+```
+
+## Export Output
+Default file: `src/antd_mcp/exports/antd_components_all.json`
+Structure:
+```
+{
+  "generated_at": <timestamp>,
+  "count": <number_of_components>,
+  "components": [
+    {
+      "name": "Button",
+      "title": "Button 按钮",
+      "intro": [...],
+      "props": [...],
+      "events": [...],
+      "methods": [...],
+      "other_tables": [...],
+      "table_summary": {"props":1,"events":0,...},
+      "examples": [...],
+      "source_url": "https://4x.ant.design/..."
+    }
+  ]
+}
+```
+
+## TODO / Roadmap
+- More precise table classification rules (column semantics).
+- Parallel fetching & retry with backoff.
+- Version / language (en vs cn) selection.
+- CLI wrapper.
+- Optional rate limiting.
+
+## License
+MIT (add if needed)
+
+## 安装 (发布后)
+
+```bash
+pip install antd-mcp-server
+```
+
+安装后命令行入口：
+
+```bash
+antd-mcp --once '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+## 本地构建与发布
+
+```bash
+# 构建
+python -m build
+# 上传到 PyPI
+python -m twine upload dist/*
+```
+
+## 供 AI 工具使用的 mcp.json 示例
+
+```jsonc
+{
+  "version": 1,
+  "servers": {
+    "antd_mcp": {
+      "command": "antd-mcp",
+      "args": [],
+      "timeoutSeconds": 60
+    }
+  }
+}
+```
+
+## 环境变量
+
+- `ANTD_MCP_CACHE_DIR` 自定义缓存目录。
+- `MCP_PRETTY` / `MCP_COLOR` 控制输出格式。
+
+## 版本
+
+当前版本: 0.1.0
