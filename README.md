@@ -52,13 +52,19 @@ python src/server.py
 ```
 
 Console scripts (after install or via pipx):
-```
-antd-mcp --once '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-antd-mcp-server --once '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```bash
+# 使用管道输入 JSON-RPC 请求
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | antd-mcp-server
+
+# 带格式化输出
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | antd-mcp-server --color --pretty
+
+# 长会话模式（stdin 流式输入）
+antd-mcp-server
 ```
 
 ## JSON-RPC Examples
-```
+```bash
 # List tools
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python -m server
 
@@ -117,17 +123,19 @@ pip install antd-mcp-server
 pipx install antd-mcp-server
 ```
 
-安装后命令行入口（两个脚本等价）：
+安装后命令行入口：
 
 ```bash
-antd-mcp --once '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-antd-mcp-server --once '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+# 使用管道输入 JSON-RPC 请求
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | antd-mcp-server
+
+# 带格式化输出
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | antd-mcp-server --color --pretty
+
+# 长会话模式（stdin 流式 JSON-RPC）
+antd-mcp-server
 ```
 
-长会话（stdin 流式 JSON-RPC）：
-```bash
-antd-mcp
-```
 然后向 stdin 逐行发送 JSON 请求。
 
 ## 本地构建与发布
@@ -177,12 +185,22 @@ python -m twine upload dist/*
 
 ## 供 AI 工具使用的 mcp.json 示例
 
+### 方式1：使用已安装的包（推荐）
+
+首先安装包：
+```bash
+pipx install antd-mcp-server
+# 或从本地 wheel 安装
+pipx install --force dist/antd_mcp_server-0.1.1-py2.py3-none-any.whl
+```
+
+然后配置 mcp.json：
 ```jsonc
 {
   "version": 1,
   "servers": {
     "antd_mcp": {
-      "command": "antd-mcp",
+      "command": "antd-mcp-server",
       "args": [],
       "timeoutSeconds": 60
     }
@@ -190,19 +208,42 @@ python -m twine upload dist/*
 }
 ```
 
+### 方式2：直接运行源码（开发模式）
+
+如果未安装包，可以直接运行源码：
+```jsonc
+{
+  "version": 1,
+  "servers": {
+    "antd_mcp": {
+      "command": "python",
+      "args": ["-m", "server"],
+      "cwd": "/path/to/antd-mcp/src",
+      "timeoutSeconds": 60
+    }
+  }
+}
+```
+
+注意：使用方式2时，需要确保：
+- 已安装依赖：`pip install -r src/requirements.txt`
+- `cwd` 指向项目的 `src` 目录的绝对路径
+
 ## 环境变量
 
 - `ANTD_MCP_CACHE_DIR` 自定义缓存目录。
-- `MCP_PRETTY` / `MCP_COLOR` 控制输出格式。
+- 命令行参数:
+  - `--color` 启用彩色输出
+  - `--pretty` 启用 JSON 格式化输出
 
 ## 版本
 
-当前版本: 0.1.0
+当前版本: 0.1.1
 
 ## 常见问题 (FAQ)
 
 1. ModuleNotFoundError: `No module named 'antd_mcp'`
-  - 已改为平铺布局，使用 `python -m server` 或安装后使用 `antd-mcp`。
+  - 已改为平铺布局，使用 `python -m server` 或安装后使用 `antd-mcp-server`。
 2. 输出出现多行 JSON 导致解析报错
   - 仅解析第一行或使用流模式逐行处理。
 3. 想加速批量抓取
@@ -211,5 +252,7 @@ python -m twine upload dist/*
   - 运行 `./scripts/release.sh <version>`，确保环境变量与权限正确。
 5. 如何进行试发布(dry run)?
   - 增加 `--dry-run` 参数，不上传、不推送。
+6. 如何本地测试安装?
+  - 使用 `pipx install --force dist/antd_mcp_server-<version>-py2.py3-none-any.whl`
 
 # antd-mcp
