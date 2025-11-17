@@ -27,17 +27,13 @@ dependencies = [
 dev = ["pytest>=7.4.0"]
 
 [project.scripts]
-antd-mcp = "antd_mcp.server:main"
+# Provide both names for convenience; they now point to the flat module 'server'
+antd-mcp = "server:main"
+antd-mcp-server = "server:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["antd_mcp*"]
-
-[tool.setuptools.package-data]
-antd_mcp = ["README.md"]
+py-modules = ["server", "fetcher"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

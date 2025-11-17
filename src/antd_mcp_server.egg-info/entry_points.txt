@@ -1,2 +1,3 @@
 [console_scripts]
-antd-mcp = antd_mcp.server:main
+antd-mcp = server:main
+antd-mcp-server = server:main

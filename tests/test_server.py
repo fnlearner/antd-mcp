@@ -12,18 +12,20 @@ PYTHON = sys.executable  # current interpreter
 def run_once(request_obj):
     request_str = json.dumps(request_obj, ensure_ascii=False)
     env = {**os.environ, 'PYTHONPATH': str(SRC_DIR)}
-    cmd = [PYTHON, '-m', 'antd_mcp', '--once', request_str]
+    cmd = [PYTHON, '-m', 'server', '--once', request_str]
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=60, env=env)
     if proc.returncode != 0:
         # Fallback to direct server.py invocation if module import failed
-        if 'No module named antd_mcp' in proc.stderr:
-            server_path = SRC_DIR / 'antd_mcp' / 'server.py'
+        if 'No module named' in proc.stderr:
+            server_path = SRC_DIR / 'server.py'
             cmd = [PYTHON, str(server_path), '--once', request_str]
             proc = subprocess.run(cmd, capture_output=True, text=True, timeout=60, env=env)
         if proc.returncode != 0:
             raise AssertionError(f"Process failed: {proc.stderr}\nCmd: {' '.join(cmd)}")
     out = proc.stdout.strip()
-    return json.loads(out)
+    # Some environments may produce duplicate JSON lines or additional logging; parse first valid JSON line.
+    first_line = out.splitlines()[0] if out else ''
+    return json.loads(first_line)
 
 
 def test_tools_list():
