@@ -17,6 +17,7 @@ htmlcov/
 .mypy_cache/
 .cache/
 .pytest_cache/
+.pypirc
 
 # IDE / OS files
 .DS_Store
@@ -24,3 +25,26 @@ htmlcov/
 
 # Distribution folder
 dist/
+
+# Local runtime artifacts
+src/cache/
+src/exports/
+src/antd_mcp/cache/
+src/antd_mcp/exports/
+
+# Pyenv version file
+.python-version
+
+# Package metadata caches
+pip-wheel-metadata/
+
+# Logs / reports
+*.log
+coverage.xml
+
+# Additional tooling caches
+.ruff_cache/
+.pyre/
+
+# IDEs
+.idea/
