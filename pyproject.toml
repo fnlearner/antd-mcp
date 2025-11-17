@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "antd-mcp-server"
-version = "0.1.0"
+version = "0.1.1.dev2"
 description = "MCP server exposing Ant Design v4 Chinese documentation as structured JSON-RPC tools"
 readme = "README.md"
 authors = [{name = "Your Name", email = "you@example.com"}]
@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.4.0"]
+dev = ["pytest>=7.4.0", "build>=1.0.0", "twine>=5.0.0"]
 
 [project.scripts]
 # Provide both names for convenience; they now point to the flat module 'server'
