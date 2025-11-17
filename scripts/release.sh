@@ -48,7 +48,7 @@ echo "==> Running tests"
 pytest -q || { echo "测试失败" >&2; exit 1; }
 
 echo "==> Bumping version in pyproject.toml"
-python <<'PY' "$PYPROJECT" "$NEW_VERSION"
+python - "$PYPROJECT" "$NEW_VERSION" <<'PY'
 import re, sys, pathlib
 p = pathlib.Path(sys.argv[1])
 new_v = sys.argv[2]
