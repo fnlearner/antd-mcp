@@ -48,13 +48,23 @@ echo "==> Running tests"
 pytest -q || { echo "测试失败" >&2; exit 1; }
 
 echo "==> Bumping version in pyproject.toml"
-# 简单替换 version 行, 假设格式保持
-sed -i '' "s/^version = \"[0-9A-Za-z\.-]\+\"/version = \"$NEW_VERSION\"/" "$PYPROJECT"
+python <<'PY' "$PYPROJECT" "$NEW_VERSION"
+import re, sys, pathlib
+p = pathlib.Path(sys.argv[1])
+new_v = sys.argv[2]
+txt = p.read_text()
+txt_new = re.sub(r'^version = ".*"', f'version = "{new_v}"', txt, flags=re.M)
+p.write_text(txt_new)
+PY
 
-echo "==> Committing version bump"
-git add "$PYPROJECT"
-git commit -m "chore: release $NEW_VERSION"
-git tag "v$NEW_VERSION"
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "(dry-run) 跳过 commit 与 tag 创建"
+else
+  echo "==> Committing version bump"
+  git add "$PYPROJECT"
+  git commit -m "chore: release $NEW_VERSION"
+  git tag "v$NEW_VERSION"
+fi
 
 echo "==> Cleaning dist/"
 rm -rf "$ROOT_DIR/dist" "$ROOT_DIR/build"
@@ -66,7 +76,7 @@ echo "==> Checking artifacts"
 python -m twine check dist/*
 
 if [[ "$DRY_RUN" == "true" ]]; then
-  echo "Dry run 完成: 不上传、不推送 tag。"
+  echo "Dry run 完成: 未上传 (未创建 commit/tag)。"
   exit 0
 fi
 
